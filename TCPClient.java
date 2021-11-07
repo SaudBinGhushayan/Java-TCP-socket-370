@@ -10,12 +10,17 @@ public class TCPClient {
         System.out.println("Client Created");
 
         BufferedReader ClientInput = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter your phone number ");
-        String input = ClientInput.readLine();
         PrintWriter ToServer = new PrintWriter(Client.getOutputStream(), true);
-        ToServer.println(input);
         BufferedReader in = new BufferedReader(new InputStreamReader(Client.getInputStream()));
+
+        System.out.println("Enter your phone number ");
+        int input = Integer.parseInt(ClientInput.readLine());
+        ToServer.println(input);
         System.out.println(in.readLine());
 
+        System.out.println("Enter your name ");
+        String name = ClientInput.readLine();
+        ToServer.println(name);
+        System.out.println(in.readLine());
     }
 }
