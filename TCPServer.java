@@ -15,6 +15,8 @@ public class TCPServer {
 
     public static void main(String[] args) throws IOException {
 
+        boolean flag = false;
+
         System.out.println("Establishing Clients ...");
         ServerSocket Server = new ServerSocket(0370);
         Socket ClientSocket = Server.accept();
@@ -40,25 +42,47 @@ public class TCPServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        while (true) {
+            int PhoneNumber = Integer.parseInt(inputfromClient.readLine());
 
-        int PhoneNumber = Integer.parseInt(inputfromClient.readLine());
-        boolean flag = false;
-
-        for (int i = 0; i < allPatients.size(); i++) {
-            if (PhoneNumber == allPatients.get(i).getPatient_Phone_number()) {
-                flag = true;
-                break;
-            } else {
-                outToClient.println("You don't have an account do you want to create a new account (y/n)");
+            for (int i = 0; i < allPatients.size(); i++) {
+                if (PhoneNumber == allPatients.get(i).getPatient_Phone_number()) {
+                    flag = true;
+                    break;
+                } else {
+                    outToClient.println("You don't have an account do you want to create a new account (y/n)");
+                    String choice = inputfromClient.readLine();
+                    if (choice.equals("y")) {
+                        int col_1 = PhoneNumber;
+                        outToClient.println("Enter your name ");
+                        String col_2 = inputfromClient.readLine();
+                        outToClient.println("Enter your age ");
+                        int col_3 = Integer.parseInt(inputfromClient.readLine());
+                        outToClient.println("Enter your Gender (M/F) ");
+                        String col_4 = inputfromClient.readLine();
+                        Patients p = new Patients(col_1, col_2, col_3, col_4);
+                        allPatients.add(p);
+                    } else {
+                        break;
+                    }
+                    System.out.println(allPatients.get(1).getPatient_Phone_number());
+                }
             }
-        }
-        if (flag == true) {
-            // view previous and current appointment
-            // reserve
-        }
+            if (flag == true) {
+                // do you want to reserve
+                // do you want to view
+                // do you want to modify
+                // do you want to delete
+                // exit(-1)
 
-        // String name = inputfromClient.readLine();
-        // outToClient.println("Display name " + name);
+            } else {
+                outToClient.println("Thanks, Goodbye :)");
+                break;
+            }
+
+            // String name = inputfromClient.readLine();
+            // outToClient.println("Display name " + name);
+            Server.close();
+        }
     }
-
 }
