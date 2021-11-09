@@ -1,36 +1,9 @@
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TCPServer {
-
-    static ArrayList<Appointment> allAppointments = new ArrayList<Appointment>();
-
-    static int countAppointment(int patient_Phone_number) {
-        int count = 0;
-        return count;
-    }
-
-    // Display Patient Appointment
-    static String dispalyAppointment(int patient_Phone_number) {
-        String s = "";
-        for (int i = 0; i < allAppointments.size(); i++) {
-            if (patient_Phone_number == allAppointments.get(i).getPhoneNumber()) {
-                s += "You have " + countAppointment(patient_Phone_number) + " Appointments Appointment Information "
-                        + " Appointment Number: " + allAppointments.get(i).getAppointment_no() + " Doctor: "
-                        + allAppointments.get(i).getDoctor_Name() + "Appointment in : "
-                        + allAppointments.get(i).getYear() + " / " + allAppointments.get(i).getMonth() + " / "
-                        + allAppointments.get(i).getDay() + " At: " + allAppointments.get(i).getHour() + " : "
-                        + allAppointments.get(i).getMinute() + "";
-
-            }
-            if (s.equals("")) {
-                return "Sorry, There're no appointments for you :(";
-            }
-        }
-        return s;
-    }
 
     public static void main(String[] args) throws IOException {
 
@@ -73,11 +46,12 @@ public class TCPServer {
                     appointmentsManager.insertAppointment(new Appointment(Integer.parseInt(sentence[0]), // Appointment_Number
                             Integer.parseInt(sentence[1]), // Patient_phone number
                             (sentence[2]), // Doctor name
-                            Integer.parseInt(sentence[3]), // Year
-                            Integer.parseInt(sentence[4]), // Month
-                            Integer.parseInt(sentence[5]), // Day
-                            Integer.parseInt(sentence[6]), // Hour
-                            Integer.parseInt(sentence[7]))); // minute
+                            (sentence[3]), // Year
+                            (sentence[4]), // Month
+                            (sentence[5]), // Day
+                            (sentence[6]), // Hour
+                            (sentence[7]), // to
+                            Integer.parseInt(sentence[8]))); // Number of hours
                 } catch (Exception e) {
                 }
             }
@@ -88,74 +62,76 @@ public class TCPServer {
             e.printStackTrace();
         }
 
+        System.out.println(pationtsManager.getAllPatients().size());
+        String choice = "";
+
         int PhoneNumber = Integer.parseInt(inputfromClient.readLine()); // Receive phone number from client
-        // Start Services
-        while (true) {
-            String found = "f";
-            String choice = "";
-            int menu_choice = 0;
-            for (int i = 0; i < pationtsManager.getAllPatients().size(); i++) {
-                if (PhoneNumber == pationtsManager.getAllPatients().get(i).getPatient_Phone_number()) {
-                    found = "t";
-                    outToClient.println(found);
-                    break;
-                }
-            }
-            outToClient.print(found);
-            if (found.equalsIgnoreCase("f")) {
-                outToClient.println("You don't have an account, do you want to create a new account (Y/N)");
-                choice = inputfromClient.readLine();
-                if (choice.equalsIgnoreCase("y")) {
-                    int col_1 = PhoneNumber;
-                    outToClient.println("Enter your name ");
-                    String col_2 = inputfromClient.readLine();
-                    outToClient.println("Enter your age ");
-                    int col_3 = Integer.parseInt(inputfromClient.readLine());
-                    outToClient.println("Enter your Gender (M/F) ");
-                    String col_4 = inputfromClient.readLine();
-                    Patient p = new Patient(col_1, col_2, col_3, col_4);
-                    pationtsManager.insertPatient(p);
+        String isFound = "No";
 
-                } else // if we arrive here that's mean client doesn't have an account and not willing
-                       // to register
-                {
-                    outToClient.println("Thanks, Goodbye :)");
-                    break;
-                }
-            } else {
-                menu_choice = Integer.parseInt(inputfromClient.readLine());
-                switch (menu_choice) {
-                case 1:
-                    outToClient.println(dispalyAppointment(PhoneNumber));
-                    break;
-                case 2:
-                    outToClient.println("reserve");
-                    break;
-                case 3:
-                    outToClient.println(("modify"));
-                    break;
-                case 4:
-                    outToClient.println("delete");
-                    break;
-                case 5:
-                    outToClient.println("Thanks, Goodbye :)");
-                    break;
-                default:
-                    outToClient.println("Invalid entry try again");
-
-                }
-            }
-
+        {// This Block of code to check if phone number is in own DB
+            for (int i = 0; i < pationtsManager.getAllPatients().size(); i++)
+                if (PhoneNumber == pationtsManager.getAllPatients().get(i).getPatient_Phone_number())
+                    isFound = "Yes";
+            outToClient.println(isFound);
         }
-        Server.close();
 
-        // if we arrive here that's mean patient have account in own DB
+        // appointmentsManager.dispalyAppointment(PhoneNumber, outToClient);
 
-        // View all appointments for patient
+        // is client have account OR want to create account
+        String response = inputfromClient.readLine();
+        if (response.equalsIgnoreCase("Want to create account")) {
+            String col_2 = inputfromClient.readLine();
+            int col_3 = Integer.parseInt(inputfromClient.readLine());
+            String col_4 = inputfromClient.readLine();
+            Patient p = new Patient(PhoneNumber, col_2, col_3, col_4);
+            pationtsManager.insertPatient(p);
+        }
 
-        // Do you want to reserve
-        // Do you want to modify
-        // Do you want to delete
-        // Exit(-1)
+        System.out.println(pationtsManager.getAllPatients().size());
+
+        if (!response.equalsIgnoreCase("Want to create account"))
+            ;
+        String first_entry = "yes";
+        do {
+            if (!first_entry.equals("yes")) {
+                choice = inputfromClient.readLine();
+                System.out.println("f" + choice);
+            } else {
+                choice = response;
+                System.out.println("b" + choice);
+            }
+
+            switch (choice) {
+            case "1":
+                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber, outToClient));
+                first_entry = "no";
+                break;
+            case "2":
+                outToClient.println(appointmentsManager.displayDoctors(outToClient));
+                outToClient.println("Enter year");
+                String year = inputfromClient.readLine();
+                outToClient.println("Enter month");
+                String month = inputfromClient.readLine();
+                outToClient.println("Enter day");
+                String day = inputfromClient.readLine();
+                outToClient.println(appointmentsManager.reservedDoctors(year, month, day, outToClient));
+                first_entry = "no";
+                break;
+            case "3":
+                outToClient.println(("modify"));
+                first_entry = "no";
+                break;
+            case "4":
+                outToClient.println("delete");
+                first_entry = "no";
+                break;
+            case "5":
+                outToClient.println("Thanks, Goodbye :)");
+                Server.close();
+                System.exit(0);
+            }
+        } while (true);
+
     }
+
 }
