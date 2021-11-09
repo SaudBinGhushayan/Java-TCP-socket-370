@@ -23,6 +23,12 @@ public class Patient {
         allPatients.add(p);
     }
 
+    public void displayAllPationInfo() {
+        for (int i = 0; i < allPatients.size(); i++) {
+            System.out.println(allPatients.get(i).Patient_Phone_number);
+        }
+    }
+
     public ArrayList<Patient> getAllPatients() {
         return allPatients;
     }
@@ -61,12 +67,6 @@ public class Patient {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public void displayAllPationInfo() {
-        for (int i = 0; i < allPatients.size(); i++) {
-            System.out.println(allPatients.get(i).Patient_Phone_number);
-        }
     }
     /*
      * public String toString() { return "Patients [Patient_Phone_number=" +
