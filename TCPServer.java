@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.net.*;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class TCPServer {
 
@@ -37,7 +38,7 @@ public class TCPServer {
                 }
             }
 
-            // Transfer data from patient.csv to allAppointments
+            // Transfer data from Appointments.csv to allAppointments
             Scanner inputStream2 = new Scanner(file2);
             while (inputStream2.hasNext()) {
                 String data = inputStream2.next();
@@ -62,7 +63,6 @@ public class TCPServer {
             e.printStackTrace();
         }
 
-        System.out.println(pationtsManager.getAllPatients().size());
         String choice = "";
 
         int PhoneNumber = Integer.parseInt(inputfromClient.readLine()); // Receive phone number from client
@@ -93,17 +93,14 @@ public class TCPServer {
             ;
         String first_entry = "yes";
         do {
-            if (!first_entry.equals("yes")) {
+            if (!first_entry.equals("yes"))
                 choice = inputfromClient.readLine();
-                System.out.println("f" + choice);
-            } else {
+            else
                 choice = response;
-                System.out.println("b" + choice);
-            }
 
             switch (choice) {
             case "1":
-                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber, outToClient));
+                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber));
                 first_entry = "no";
                 break;
             case "2":
@@ -115,18 +112,85 @@ public class TCPServer {
                 outToClient.println("Enter day");
                 String day = inputfromClient.readLine();
                 outToClient.println(appointmentsManager.reservedDoctors(year, month, day, outToClient));
+                outToClient.println("from");
+                String hour = inputfromClient.readLine();
+                outToClient.println("to");
+                String to = inputfromClient.readLine();
+                outToClient.println("how many hours do you want");
+                int no_hours = Integer.parseInt(inputfromClient.readLine());
+                outToClient.println(
+                        "Enter the name of your doctor (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel)");
+                String doc_name = inputfromClient.readLine();
+                Appointment appointment = new Appointment(appointmentsManager.getAllAppointments().size() + 1,
+                        PhoneNumber, doc_name, year, month, day, hour, to, no_hours);
+                outToClient.println((appointmentsManager.reserve(appointment)));
+                System.out.println(appointmentsManager.getAllAppointments().size());
+                outToClient.println("Appointment number :@" + appointmentsManager.getAllAppointments().size() + "@"
+                        + "with doctor :@" + doc_name + "@" + "At :@" + hour + " to " + to + "@"
+                        + "your price will be:@" + appointmentsManager.receipt(doc_name, no_hours, outToClient));
                 first_entry = "no";
                 break;
             case "3":
-                outToClient.println(("modify"));
+                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber)); // return info of appointment
+                if (!(appointmentsManager.dispalyAppointment(PhoneNumber)
+                        .equalsIgnoreCase("You don't have any appointment"))) {
+                    outToClient.println("Which appointment wants to modify?@Choose number from the list:");
+                    int numberOfAppointmentWantsToModify = Integer.parseInt(inputfromClient.readLine());
+                    outToClient.println(
+                            "Enter Doctor name (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel) ");
+                    String doctor_name = inputfromClient.readLine();
+                    outToClient.println("Enter year");
+                    String year_ = inputfromClient.readLine();
+                    outToClient.println("Enter month");
+                    String month_ = inputfromClient.readLine();
+                    outToClient.println("Enter day");
+                    String day_ = inputfromClient.readLine();
+                    outToClient.println("From hour");
+                    String hour_ = inputfromClient.readLine();
+                    outToClient.println("to");
+                    String to_ = inputfromClient.readLine();
+                    outToClient.println("Enter number of hours");
+                    int no_hours_ = Integer.parseInt(inputfromClient.readLine());
+                    outToClient.println((appointmentsManager.modifyAppointment(numberOfAppointmentWantsToModify,
+                            PhoneNumber, doctor_name, year_, month_, day_, hour_, to_, no_hours_)));
+
+                }
                 first_entry = "no";
                 break;
             case "4":
-                outToClient.println("delete");
+                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber)); // return info of appointment
+                if (!(appointmentsManager.dispalyAppointment(PhoneNumber)
+                        .equalsIgnoreCase("You don't have any appointment"))) {
+                    System.out.println(appointmentsManager.getAllAppointments().size());
+                    int numberOfAppointmentWantsToDelete = Integer.parseInt(inputfromClient.readLine());
+                    outToClient.println(
+                            appointmentsManager.deleteAppointment(numberOfAppointmentWantsToDelete, PhoneNumber));
+                    System.out.println(appointmentsManager.getAllAppointments().size());
+                }
                 first_entry = "no";
                 break;
             case "5":
                 outToClient.println("Thanks, Goodbye :)");
+                PrintWriter write_to_csv = new PrintWriter(file2);
+                int to_keep_header = 0;
+                for (int i = 0; i < appointmentsManager.getAllAppointments().size(); i++) {
+                    if (to_keep_header == 0) {
+                        write_to_csv.println("Appointment_No,Patint_Phone,Doctor_Name,year,month,day,hour,to,no_hours");
+                    }
+                    write_to_csv.printf("%d,%d,%s,%s,%s,%s,%s,%s,%s\n",
+                            appointmentsManager.getAllAppointments().get(i).getAppointment_no(),
+                            appointmentsManager.getAllAppointments().get(i).getPhoneNumber(),
+                            appointmentsManager.getAllAppointments().get(i).getDoctor_Name(),
+                            appointmentsManager.getAllAppointments().get(i).getYear(),
+                            appointmentsManager.getAllAppointments().get(i).getMonth(),
+                            appointmentsManager.getAllAppointments().get(i).getDay(),
+                            appointmentsManager.getAllAppointments().get(i).getHour(),
+                            appointmentsManager.getAllAppointments().get(i).getTo(),
+                            appointmentsManager.getAllAppointments().get(i).getno_hours());
+                    to_keep_header = 1;
+
+                }
+                write_to_csv.close();
                 Server.close();
                 System.exit(0);
             }

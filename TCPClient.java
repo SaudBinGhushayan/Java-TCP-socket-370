@@ -90,24 +90,70 @@ public class TCPClient {
 
                 case "2": {
                     ToServer.println("2");
-                    System.out.println(in.readLine().replace("@", "\n"));
-                    System.out.println(in.readLine());
+                    System.out.println(in.readLine().replace("@", "\n"));// display doctors
+                    System.out.println(in.readLine());// enter year
                     ToServer.println(scan.next());
-                    System.out.println(in.readLine());
+                    System.out.println(in.readLine());// enter month
                     ToServer.println(scan.next());
-                    System.out.println(in.readLine());
+                    System.out.println(in.readLine());// enter day
                     ToServer.println(scan.next());
-                    System.out.println(in.readLine().replace("@", "\n"));
+                    System.out.println(in.readLine().replace("@", "\n"));// display reserved doctors
+                    System.out.println(in.readLine());// enter from
+                    ToServer.println(scan.next());
+                    System.out.println(in.readLine());// enter to
+                    ToServer.println(scan.next());
+                    System.out.println(in.readLine());// enter number of hours
+                    ToServer.println(scan.nextInt());
+                    System.out.println(in.readLine());// enter doc name
+                    ToServer.println(scan.next());
+                    System.out.println(in.readLine());// reserving appointment
+                    System.out.println(in.readLine().replace("@", "\n"));// printing receipt
                     break;
                 }
 
                 case "3": {
-                    // some code
+                    ToServer.println("3");
+                    String serverMessage = in.readLine();
+                    if (serverMessage.equalsIgnoreCase("You don't have any appointment")) {
+                        System.out.println(serverMessage);
+                    } else {
+                        System.out.println(serverMessage.replace("@", "\n"));// display appointments
+                        System.out.println(in.readLine().replace("@", "\n"));// display which appointment to modify
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter doctor name
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter year
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter month
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter day
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter hour
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter to
+                        ToServer.println(scan.next());
+                        System.out.println(in.readLine());// enter number of hours
+                        ToServer.println(scan.next());
+
+                        System.out.println(in.readLine());
+                    }
                     break;
                 }
-
                 case "4": {
-                    // some code
+                    ToServer.println("4");
+                    String serverMessage = in.readLine();
+                    if (serverMessage.equalsIgnoreCase("You don't have any appointment")) {
+                        System.out.println(serverMessage);
+                    } else {
+                        System.out.println(serverMessage.replace("@", "\n"));
+                        System.out.println("Which appointment wants to delete?");
+                        System.out.println("Choose number from the list:");
+
+                        int numberOfAppointmentWantsToDelete = scan.nextInt();
+                        ToServer.println(numberOfAppointmentWantsToDelete);
+                        System.out.println(in.readLine());
+
+                    }
                     break;
                 }
 

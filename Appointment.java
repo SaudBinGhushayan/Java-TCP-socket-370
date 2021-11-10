@@ -45,7 +45,7 @@ public class Appointment {
 	}
 
 	// Display Patient Appointment
-	public String dispalyAppointment(int patient_Phone_number, PrintWriter outToClient) {
+	public String dispalyAppointment(int patient_Phone_number) {
 		String appointmentDetails = "";
 		char zero = '0';
 		for (int i = 0; i < allAppointments.size(); i++)
@@ -56,7 +56,7 @@ public class Appointment {
 						+ countAppointment(patient_Phone_number) + " Appointments@Appointment Number:"
 						+ allAppointments.get(i).getAppointment_no() + "@Date: " + allAppointments.get(i).getYear()
 						+ "/" + allAppointments.get(i).getMonth() + "/" + allAppointments.get(i).getDay() + " At "
-						+ allAppointments.get(i).getHour() + ":" + allAppointments.get(i).getTo() + "@With Dr."
+						+ allAppointments.get(i).getHour() + ":" + allAppointments.get(i).getTo() + "@With "
 						+ allAppointments.get(i).getDoctor_Name();
 				for (int j = 1; j < countAppointment(patient_Phone_number); j++) {
 					if (allAppointments.get(j).getTo().length() == 1)
@@ -64,13 +64,13 @@ public class Appointment {
 					appointmentDetails += "@------------------------------------@Appointment Number: "
 							+ allAppointments.get(j).getAppointment_no() + "@Date: " + allAppointments.get(j).getYear()
 							+ "/" + allAppointments.get(j).getMonth() + "/" + allAppointments.get(j).getDay() + " At "
-							+ allAppointments.get(j).getHour() + ":" + allAppointments.get(j).getTo() + "@With Dr."
+							+ allAppointments.get(j).getHour() + ":" + allAppointments.get(j).getTo() + "@With "
 							+ allAppointments.get(j).getDoctor_Name();
 				}
 				return appointmentDetails;
 			}
 
-		return "You don't have any appointment!";
+		return "You don't have any appointment";
 	}
 
 	public String displayDoctors(PrintWriter OutToClient) {
@@ -82,35 +82,90 @@ public class Appointment {
 	}
 
 	public String reservedDoctors(String year, String month, String day, PrintWriter OutToClient) {
-		String display = "";
+
 		for (int i = 0; i < allAppointments.size(); i++) {
-			if (allAppointments.get(i).getYear() == year && allAppointments.get(i).getMonth() == month
-					&& allAppointments.get(i).getDay() == day) {
-				display = "Doctor name            reserved hours@" + allAppointments.get(i).getDoctor_Name()
+			if (allAppointments.get(i).getYear().equals(year) && allAppointments.get(i).getMonth().equals(month)
+					&& allAppointments.get(i).getDay().equals(day)) {
+				return "Doctor name            reserved hours@" + allAppointments.get(i).getDoctor_Name()
 						+ "         From " + allAppointments.get(i).getHour() + ":00 to "
 						+ allAppointments.get(i).getTo() + ":00";
-				return display;
+
 			}
 		}
 
-		return "There'are no reserved appointments in this particular day";
+		return "There're no reserved appointments in this particular day , you can reserve any time";
 	}
 
-	public ArrayList<Appointment> reserve(int Phone_number, String doc_name, String year, String month, String day,
-			String hour, String to, int no_hours, ArrayList<Appointment> allAppointments) {
-		boolean found = false;
-		for (int i = 0; i < allAppointments.size(); i++)
-			if (allAppointments.get(i).getDoctor_Name() != doc_name && allAppointments.get(i).getYear() != year
-					&& allAppointments.get(i).getMonth() != month && allAppointments.get(i).getDay() != day
-					&& allAppointments.get(i).getHour() != hour && allAppointments.get(i).getTo() != to)
-				found = true;
-		if (found)
-			// we must print to the client that there's an appointment with his entry
-			System.out.println();
-		else
-			allAppointments.add(allAppointments.size() + 1, new Appointment(allAppointments.size() + 1, Phone_number,
-					doc_name, year, month, day, hour, to, no_hours));
-		return allAppointments;
+	public String reserve(Appointment appointment) {
+		allAppointments.add(appointment);
+		return "appointment reserved";
+
+	}
+
+	public int receipt(String doc_name, int no_hours, PrintWriter outToClient) {
+		int receipt = 0;
+		switch (doc_name) {
+		case "Dr.SaudBinGhushayan":
+			receipt = 300 * no_hours;
+			break;
+		case "Dr.AbdulmajeedDuraibi":
+			receipt = 250 * no_hours;
+			break;
+		case "Dr.KhalidAldayel":
+			receipt = 200 * no_hours;
+			break;
+		}
+		return receipt;
+	}
+
+	// =================Method Delete Appointment===================
+	public String deleteAppointment(int appointment_no, int PhoneNumber) {
+		ArrayList<Integer> Appointments = new ArrayList<>();
+
+		for (int i = 0; i < allAppointments.size(); i++) {
+			if (allAppointments.get(i).getPhoneNumber() == PhoneNumber) {
+				Appointments.add(allAppointments.get(i).getAppointment_no());
+			}
+		}
+
+		for (int i = 0; i < Appointments.size(); i++)
+			if (Appointments.get(i) == appointment_no)
+				for (int j = 0; j < allAppointments.size(); j++)
+					if (allAppointments.get(j).getAppointment_no() == appointment_no) {
+						allAppointments.remove(j);
+						return "Appointment Deleted";
+					}
+
+		return "The entered appointment number is not found";
+
+	}
+
+	// =================Method Modify Appointment===================
+	public String modifyAppointment(int appointment_no, int PhoneNumber, String doc_name, String year, String month,
+			String day, String hour, String to, int no_hours) {
+		ArrayList<Integer> Appointments = new ArrayList<>();
+
+		for (int i = 0; i < allAppointments.size(); i++) {
+			if (allAppointments.get(i).getPhoneNumber() == PhoneNumber) {
+				Appointments.add(allAppointments.get(i).getAppointment_no());
+			}
+		}
+
+		for (int i = 0; i < Appointments.size(); i++)
+			if (Appointments.get(i) == appointment_no)
+				for (int j = 0; j < allAppointments.size(); j++)
+					if (allAppointments.get(j).getAppointment_no() == appointment_no) {
+						allAppointments.get(j).setDoctor_Name(doc_name);
+						allAppointments.get(j).setYear(year);
+						allAppointments.get(j).setMonth(month);
+						allAppointments.get(j).setDay(day);
+						allAppointments.get(j).setHour(hour);
+						allAppointments.get(j).setTo(to);
+						allAppointments.get(j).setno_hours(no_hours);
+						return "Appointment modified successfully";
+					}
+
+		return "The entered appointment number is not found";
 
 	}
 
@@ -174,7 +229,7 @@ public class Appointment {
 		return to;
 	}
 
-	public void setTo(String minute) {
+	public void setTo(String to) {
 		this.to = to;
 	}
 
@@ -182,7 +237,7 @@ public class Appointment {
 		return no_hours;
 	}
 
-	public void setno_hours(int minute) {
+	public void setno_hours(int no_hours) {
 		this.no_hours = no_hours;
 	}
 
