@@ -84,6 +84,7 @@ public class TCPServer {
             String col_4 = inputfromClient.readLine();
             Patient p = new Patient(PhoneNumber, col_2, col_3, col_4);
             pationtsManager.insertPatient(p);
+
             response = inputfromClient.readLine();
         } // else if (!response.equalsIgnoreCase("Want to create account")) {
           // choice = response;
@@ -172,13 +173,29 @@ public class TCPServer {
                 break;
             case "5":
                 outToClient.println("Thanks, Goodbye :)");
-                PrintWriter write_to_csv = new PrintWriter(file2);
-                int to_keep_header = 0;
-                for (int i = 0; i < appointmentsManager.getAllAppointments().size(); i++) {
-                    if (to_keep_header == 0) {
-                        write_to_csv.println("Appointment_No,Patint_Phone,Doctor_Name,year,month,day,hour,to,no_hours");
+                PrintWriter write_to_csv_patient = new PrintWriter(file1);
+                PrintWriter write_to_csv_appointment = new PrintWriter(file2);
+                int to_keep_header1 = 0;
+                int to_keep_header2 = 0;
+                for (int i = 0; i < pationtsManager.getAllPatients().size(); i++) {
+                    if (to_keep_header1 == 0) {
+                        write_to_csv_patient.println("Patient Phone Number,name ,age ,gender");
                     }
-                    write_to_csv.printf("%d,%d,%s,%s,%s,%s,%s,%s,%s\n",
+                    write_to_csv_patient.printf("%d,%s,%d,%s\n",
+                            pationtsManager.getAllPatients().get(i).getPatient_Phone_number(),
+                            pationtsManager.getAllPatients().get(i).getName(),
+                            pationtsManager.getAllPatients().get(i).getAge(),
+                            pationtsManager.getAllPatients().get(i).getGender());
+                    to_keep_header1 = 1;
+
+                }
+                write_to_csv_patient.close();
+                for (int i = 0; i < appointmentsManager.getAllAppointments().size(); i++) {
+                    if (to_keep_header2 == 0) {
+                        write_to_csv_appointment
+                                .println("Appointment_No,Patint_Phone,Doctor_Name,year,month,day,hour,to,no_hours");
+                    }
+                    write_to_csv_appointment.printf("%d,%d,%s,%s,%s,%s,%s,%s,%s\n",
                             appointmentsManager.getAllAppointments().get(i).getAppointment_no(),
                             appointmentsManager.getAllAppointments().get(i).getPhoneNumber(),
                             appointmentsManager.getAllAppointments().get(i).getDoctor_Name(),
@@ -188,10 +205,10 @@ public class TCPServer {
                             appointmentsManager.getAllAppointments().get(i).getHour(),
                             appointmentsManager.getAllAppointments().get(i).getTo(),
                             appointmentsManager.getAllAppointments().get(i).getno_hours());
-                    to_keep_header = 1;
+                    to_keep_header2 = 1;
 
                 }
-                write_to_csv.close();
+                write_to_csv_appointment.close();
                 Server.close();
                 System.exit(0);
             }
