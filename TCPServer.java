@@ -64,7 +64,6 @@ public class TCPServer {
         }
 
         String choice = "";
-
         int PhoneNumber = Integer.parseInt(inputfromClient.readLine()); // Receive phone number from client
         String isFound = "No";
 
@@ -85,13 +84,15 @@ public class TCPServer {
             String col_4 = inputfromClient.readLine();
             Patient p = new Patient(PhoneNumber, col_2, col_3, col_4);
             pationtsManager.insertPatient(p);
-        }
+            response = inputfromClient.readLine();
+        } // else if (!response.equalsIgnoreCase("Want to create account")) {
+          // choice = response;
+          // }
 
-        System.out.println(pationtsManager.getAllPatients().size());
+        // System.out.println(pationtsManager.getAllPatients().size());
 
-        if (!response.equalsIgnoreCase("Want to create account"))
-            ;
         String first_entry = "yes";
+
         do {
             if (!first_entry.equals("yes"))
                 choice = inputfromClient.readLine();
@@ -134,7 +135,7 @@ public class TCPServer {
                 outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber)); // return info of appointment
                 if (!(appointmentsManager.dispalyAppointment(PhoneNumber)
                         .equalsIgnoreCase("You don't have any appointment"))) {
-                    outToClient.println("Which appointment wants to modify?@Choose number from the list:");
+                    outToClient.println("Which appointment wants to modify?@Choose appointment number :");
                     int numberOfAppointmentWantsToModify = Integer.parseInt(inputfromClient.readLine());
                     outToClient.println(
                             "Enter Doctor name (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel) ");

@@ -18,7 +18,8 @@ public class TCPClient {
     public static void main(String[] args) throws IOException {
         Socket Client = new Socket("localhost", 0370);
         System.out.println("Client Created");
-        BufferedReader ClientInput = new BufferedReader(new InputStreamReader(System.in));
+        // BufferedReader ClientInput = new BufferedReader(new
+        // InputStreamReader(System.in));
         PrintWriter ToServer = new PrintWriter(Client.getOutputStream(), true);
         BufferedReader in = new BufferedReader(new InputStreamReader(Client.getInputStream()));
         Scanner scan = new Scanner(System.in);
@@ -79,10 +80,10 @@ public class TCPClient {
                     || choice.equals("4") || choice.equals("5")))
                 System.out.println("------------\nError, enter number from 1 to 5\n------------");
             else {
-
                 switch (choice) {
 
                 case "1": {
+                    System.out.println(choice);
                     ToServer.println("1");
                     System.out.println(in.readLine().replace("@", "\n"));
                     break;
