@@ -122,7 +122,7 @@ public class TCPServer {
                 outToClient.println("To ->");
                 String to = inputfromClient.readLine();
                 outToClient.println("How many hours do you want (Maximum 4 hours) ->");
-                int no_hours = inputfromClient.read();
+                int no_hours = Integer.parseInt(inputfromClient.readLine());
                 System.out.print(no_hours);
                 outToClient.println(
                         "Enter the name of your doctor (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel)");

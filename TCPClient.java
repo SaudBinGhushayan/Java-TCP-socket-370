@@ -167,6 +167,14 @@ public class TCPClient {
 
 	}
 
+	static boolean checkAppointmentNumber(String appointmnetNumber) {
+		if (appointmnetNumber.length() < 1 && appointmnetNumber.length() > 3)
+			return true;
+		else
+			return false;
+
+	}
+
 	public static void main(String[] args) throws IOException {
 		Socket Client = new Socket("localhost", 0370);
 		System.out.println("Client Created");
@@ -320,10 +328,15 @@ public class TCPClient {
 						if (!checkHours(hours))
 							System.out.println("------------\nError, try again\n------------");
 					} while (!checkHours(hours));
-					ToServer.println(Integer.parseInt(hours)); // send hours as integer to server
+					ToServer.println(hours); // send hours as integer to server
 
 					System.out.println(in.readLine());// enter doc name
 
+					do {
+						doctorName = scan.next();
+						if (!checkDrName(doctorName))
+							System.out.println("------------\nError, try again\n------------");
+					} while (!checkDrName(doctorName));
 					ToServer.println(doctorName); // send doctor name to server
 
 					System.out.println(in.readLine());// reserving appointment
