@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Appointment {
 	private int Appointment_no;
 	private int PhoneNumber;
-	private String Doctor_Name; // New attribute
+	private String Doctor_Name;
 	private String year;
 	private String month;
 	private String day;
@@ -29,6 +29,7 @@ public class Appointment {
 		this.hour = hour;
 		this.to = to;
 		this.no_hours = no_hours;
+
 	}
 
 	// insert new patient to array list
@@ -52,20 +53,34 @@ public class Appointment {
 			if (patient_Phone_number == allAppointments.get(i).getPhoneNumber()) {
 				if (allAppointments.get(i).getTo().length() == 1)
 					allAppointments.get(i).setTo(zero + allAppointments.get(i).getTo());
-				appointmentDetails += "Starting printing information ...@You have "
-						+ countAppointment(patient_Phone_number) + " Appointments@Appointment Number:"
-						+ allAppointments.get(i).getAppointment_no() + "@Date: " + allAppointments.get(i).getYear()
-						+ "/" + allAppointments.get(i).getMonth() + "/" + allAppointments.get(i).getDay() + " At "
-						+ allAppointments.get(i).getHour() + ":" + allAppointments.get(i).getTo() + "@With "
-						+ allAppointments.get(i).getDoctor_Name();
+				appointmentDetails += "Start printing information ...@";
+				if (countAppointment(patient_Phone_number) == 0) {
+					appointmentDetails = "You Don't have any appointments";
+					return appointmentDetails;
+				} else if (countAppointment(patient_Phone_number) == 1)
+					appointmentDetails += "=====================================@You have "
+							+ countAppointment(patient_Phone_number)
+							+ " Appointment@=====================================";
+				else
+					appointmentDetails += "=====================================@You have "
+							+ countAppointment(patient_Phone_number)
+							+ " Appointments@====================================";
+
+				appointmentDetails += "@Appointment Number:" + allAppointments.get(i).getAppointment_no() + "@Date: "
+						+ allAppointments.get(i).getYear() + "/" + allAppointments.get(i).getMonth() + "/"
+						+ allAppointments.get(i).getDay() + " At " + allAppointments.get(i).getHour() + " to "
+						+ allAppointments.get(i).getTo() + "@With " + allAppointments.get(i).getDoctor_Name()
+						+ "@The price: " + allAppointments.get(i).receipt(allAppointments.get(i).getDoctor_Name(),
+								allAppointments.get(i).getNo_hours());
 				for (int j = 1; j < countAppointment(patient_Phone_number); j++) {
 					if (allAppointments.get(j).getTo().length() == 1)
 						allAppointments.get(j).setTo(zero + allAppointments.get(j).getTo());
 					appointmentDetails += "@------------------------------------@Appointment Number: "
 							+ allAppointments.get(j).getAppointment_no() + "@Date: " + allAppointments.get(j).getYear()
 							+ "/" + allAppointments.get(j).getMonth() + "/" + allAppointments.get(j).getDay() + " At "
-							+ allAppointments.get(j).getHour() + ":" + allAppointments.get(j).getTo() + "@With "
-							+ allAppointments.get(j).getDoctor_Name();
+							+ allAppointments.get(j).getHour() + " to " + allAppointments.get(j).getTo() + "@With "
+							+ allAppointments.get(j).getDoctor_Name() + "@The price: " + allAppointments.get(i).receipt(
+									allAppointments.get(j).getDoctor_Name(), allAppointments.get(j).getNo_hours());
 				}
 				return appointmentDetails;
 			}
@@ -73,15 +88,15 @@ public class Appointment {
 		return "You don't have any appointment";
 	}
 
-	public String displayDoctors(PrintWriter OutToClient) {
-		String display = "Doctor Name :             Working hours             price per hour@"
+	public String displayDoctors() {
+		String display = "Doctor Name :             Working hours              price per hour@"
 				+ "Dr.Saud BinGhushayan             13:00 to 23:00             300 SR@"
 				+ "Dr.Abdulmajeed Duraibi           16:00 to 23:00             250 SR@"
 				+ "Dr.Khalid Aldayel             	18:00 to 22:00             200 SR@";
 		return display;
 	}
 
-	public String reservedDoctors(String year, String month, String day, PrintWriter OutToClient) {
+	public String reservedDoctors(String year, String month, String day) {
 
 		for (int i = 0; i < allAppointments.size(); i++) {
 			if (allAppointments.get(i).getYear().equals(year) && allAppointments.get(i).getMonth().equals(month)
@@ -102,7 +117,8 @@ public class Appointment {
 
 	}
 
-	public int receipt(String doc_name, int no_hours, PrintWriter outToClient) {
+	// @ Return price
+	public int receipt(String doc_name, int no_hours) {
 		int receipt = 0;
 		switch (doc_name) {
 		case "Dr.SaudBinGhushayan":
@@ -116,28 +132,6 @@ public class Appointment {
 			break;
 		}
 		return receipt;
-	}
-
-	// =================Method Delete Appointment===================
-	public String deleteAppointment(int appointment_no, int PhoneNumber) {
-		ArrayList<Integer> Appointments = new ArrayList<>();
-
-		for (int i = 0; i < allAppointments.size(); i++) {
-			if (allAppointments.get(i).getPhoneNumber() == PhoneNumber) {
-				Appointments.add(allAppointments.get(i).getAppointment_no());
-			}
-		}
-
-		for (int i = 0; i < Appointments.size(); i++)
-			if (Appointments.get(i) == appointment_no)
-				for (int j = 0; j < allAppointments.size(); j++)
-					if (allAppointments.get(j).getAppointment_no() == appointment_no) {
-						allAppointments.remove(j);
-						return "Appointment Deleted";
-					}
-
-		return "The entered appointment number is not found";
-
 	}
 
 	// =================Method Modify Appointment===================
@@ -169,6 +163,29 @@ public class Appointment {
 
 	}
 
+	// =================Method Delete Appointment===================
+	public String deleteAppointment(int appointment_no, int PhoneNumber) {
+		ArrayList<Integer> Appointments = new ArrayList<>();
+
+		for (int i = 0; i < allAppointments.size(); i++) {
+			if (allAppointments.get(i).getPhoneNumber() == PhoneNumber) {
+				Appointments.add(allAppointments.get(i).getAppointment_no());
+			}
+		}
+
+		for (int i = 0; i < Appointments.size(); i++)
+			if (Appointments.get(i) == appointment_no)
+				for (int j = 0; j < allAppointments.size(); j++)
+					if (allAppointments.get(j).getAppointment_no() == appointment_no) {
+						allAppointments.remove(j);
+						return "Appointment Deleted";
+					}
+
+		return "The entered appointment number is not found";
+
+	}
+
+	// =================Getters and Setters===================
 	public int getAppointment_no() {
 		return Appointment_no;
 	}
@@ -238,6 +255,14 @@ public class Appointment {
 	}
 
 	public void setno_hours(int no_hours) {
+		this.no_hours = no_hours;
+	}
+
+	public int getNo_hours() {
+		return no_hours;
+	}
+
+	public void setNo_hours(int no_hours) {
 		this.no_hours = no_hours;
 	}
 

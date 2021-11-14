@@ -68,9 +68,5 @@ public class Patient {
     public void setGender(String gender) {
         this.gender = gender;
     }
-    /*
-     * public String toString() { return "Patients [Patient_Phone_number=" +
-     * Patient_Phone_number + ", name=" + name + ", age=" + age + ", gender=" +
-     * gender + "]"; }
-     */
+
 }
