@@ -1,14 +1,12 @@
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.*;
 import java.util.Scanner;
-import java.util.Arrays;
 
 public class TCPServer {
 
     public static void main(String[] args) throws IOException {
 
-        Patient pationtsManager = new Patient();
+        Patient patientManager = new Patient();
         Appointment appointmentsManager = new Appointment();
 
         System.out.println("Establishing Clients ...");
@@ -30,7 +28,7 @@ public class TCPServer {
                 String data = inputStream1.next();
                 String[] sentence = data.split(",");
                 try {
-                    pationtsManager.insertPatient(new Patient(Integer.parseInt(sentence[0]), // patient_phone_number
+                    patientManager.insertPatient(new Patient(Integer.parseInt(sentence[0]), // patient_phone_number
                             (sentence[1]), // name
                             Integer.parseInt(sentence[2]), // age
                             sentence[3])); // gender
@@ -63,17 +61,22 @@ public class TCPServer {
             e.printStackTrace();
         }
 
+        // =================================================//
         String choice = "";
         int PhoneNumber = Integer.parseInt(inputfromClient.readLine()); // Receive phone number from client
         String isFound = "No";
 
         {// This Block of code to check if phone number is in own DB
-            for (int i = 0; i < pationtsManager.getAllPatients().size(); i++)
-                if (PhoneNumber == pationtsManager.getAllPatients().get(i).getPatient_Phone_number())
+            for (int i = 0; i < patientManager.getAllPatients().size(); i++)
+                if (PhoneNumber == patientManager.getAllPatients().get(i).getPatient_Phone_number())
                     isFound = "Yes";
             outToClient.println(isFound);
         }
-
+        if (isFound.equalsIgnoreCase("Yes")) {
+            for (int i = 0; i < patientManager.getAllPatients().size(); i++)
+                if (PhoneNumber == patientManager.getAllPatients().get(i).getPatient_Phone_number())
+                    outToClient.println(patientManager.getAllPatients().get(i).getName());
+        }
         // appointmentsManager.dispalyAppointment(PhoneNumber, outToClient);
 
         // is client have account OR want to create account
@@ -83,7 +86,7 @@ public class TCPServer {
             int col_3 = Integer.parseInt(inputfromClient.readLine());
             String col_4 = inputfromClient.readLine();
             Patient p = new Patient(PhoneNumber, col_2, col_3, col_4);
-            pationtsManager.insertPatient(p);
+            patientManager.insertPatient(p);
 
             response = inputfromClient.readLine();
         } // else if (!response.equalsIgnoreCase("Want to create account")) {
@@ -106,20 +109,21 @@ public class TCPServer {
                 first_entry = "no";
                 break;
             case "2":
-                outToClient.println(appointmentsManager.displayDoctors(outToClient));
-                outToClient.println("Enter year");
-                String year = inputfromClient.readLine();
-                outToClient.println("Enter month");
+                outToClient.println(appointmentsManager.displayDoctors());
+                outToClient.println("Enter year ->");
+                String year = inputfromClient.readLine(); // Receive year form client
+                outToClient.println("Enter month ->");
                 String month = inputfromClient.readLine();
-                outToClient.println("Enter day");
+                outToClient.println("Enter day ->");
                 String day = inputfromClient.readLine();
-                outToClient.println(appointmentsManager.reservedDoctors(year, month, day, outToClient));
-                outToClient.println("from");
+                outToClient.println(appointmentsManager.reservedDoctors(year, month, day));
+                outToClient.println("From ->");
                 String hour = inputfromClient.readLine();
-                outToClient.println("to");
+                outToClient.println("To ->");
                 String to = inputfromClient.readLine();
-                outToClient.println("how many hours do you want");
-                int no_hours = Integer.parseInt(inputfromClient.readLine());
+                outToClient.println("How many hours do you want (Maximum 4 hours) ->");
+                int no_hours = inputfromClient.read();
+                System.out.print(no_hours);
                 outToClient.println(
                         "Enter the name of your doctor (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel)");
                 String doc_name = inputfromClient.readLine();
@@ -127,9 +131,9 @@ public class TCPServer {
                         PhoneNumber, doc_name, year, month, day, hour, to, no_hours);
                 outToClient.println((appointmentsManager.reserve(appointment)));
                 System.out.println(appointmentsManager.getAllAppointments().size());
-                outToClient.println("Appointment number :@" + appointmentsManager.getAllAppointments().size() + "@"
-                        + "with doctor :@" + doc_name + "@" + "At :@" + hour + " to " + to + "@"
-                        + "your price will be:@" + appointmentsManager.receipt(doc_name, no_hours, outToClient));
+                outToClient.println("Appointment number: " + appointmentsManager.getAllAppointments().size() + "@"
+                        + "with doctor: " + doc_name + "@" + "At: " + hour + ":00 to " + to + ":00@"
+                        + "your price will be: " + appointmentsManager.receipt(doc_name, no_hours));
                 first_entry = "no";
                 break;
             case "3":
@@ -155,7 +159,6 @@ public class TCPServer {
                     int no_hours_ = Integer.parseInt(inputfromClient.readLine());
                     outToClient.println((appointmentsManager.modifyAppointment(numberOfAppointmentWantsToModify,
                             PhoneNumber, doctor_name, year_, month_, day_, hour_, to_, no_hours_)));
-
                 }
                 first_entry = "no";
                 break;
@@ -177,15 +180,15 @@ public class TCPServer {
                 PrintWriter write_to_csv_appointment = new PrintWriter(file2);
                 int to_keep_header1 = 0;
                 int to_keep_header2 = 0;
-                for (int i = 0; i < pationtsManager.getAllPatients().size(); i++) {
+                for (int i = 0; i < patientManager.getAllPatients().size(); i++) {
                     if (to_keep_header1 == 0) {
                         write_to_csv_patient.println("Patient Phone Number,name ,age ,gender");
                     }
                     write_to_csv_patient.printf("%d,%s,%d,%s\n",
-                            pationtsManager.getAllPatients().get(i).getPatient_Phone_number(),
-                            pationtsManager.getAllPatients().get(i).getName(),
-                            pationtsManager.getAllPatients().get(i).getAge(),
-                            pationtsManager.getAllPatients().get(i).getGender());
+                            patientManager.getAllPatients().get(i).getPatient_Phone_number(),
+                            patientManager.getAllPatients().get(i).getName(),
+                            patientManager.getAllPatients().get(i).getAge(),
+                            patientManager.getAllPatients().get(i).getGender());
                     to_keep_header1 = 1;
 
                 }
