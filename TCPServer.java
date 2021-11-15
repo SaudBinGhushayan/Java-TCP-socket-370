@@ -1,13 +1,15 @@
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
+import java.util.Random;
 
 public class TCPServer {
 
     public static void main(String[] args) throws IOException {
 
-        Patient patientManager = new Patient();
-        Appointment appointmentsManager = new Appointment();
+        Patient patientManager = new Patient(); // have allPatients array list which contain all patients
+        Appointment appointmentsManager = new Appointment(); // have allAppointments array list which contain all
+                                                             // appointments
 
         System.out.println("Establishing Clients ...");
         ServerSocket Server = new ServerSocket(0370);
@@ -15,6 +17,7 @@ public class TCPServer {
         System.out.println("Connection Created ");
         BufferedReader inputfromClient = new BufferedReader(new InputStreamReader(ClientSocket.getInputStream()));
         PrintWriter outToClient = new PrintWriter(ClientSocket.getOutputStream(), true);
+        Random random = new Random();
 
         // Start Transfer Data from DB to system
         String PatientFile = "Patient.csv";
@@ -66,15 +69,15 @@ public class TCPServer {
 
         String choice;
         int PhoneNumber = Integer.parseInt(inputfromClient.readLine()); // Receive phone number from client as string
-                                                                        // and convert to integer from client
+                                                                        // and convert to integer
         String isFound = "No";
 
-        // This Block of code to check if phone number is in own DB
+        // Block of code to check if phone number in own DB
         {
             for (int i = 0; i < patientManager.getAllPatients().size(); i++)
                 if (PhoneNumber == patientManager.getAllPatients().get(i).getPatient_Phone_number())
                     isFound = "Yes";
-            outToClient.println(isFound);
+            outToClient.println(isFound); // send isFound to client
         }
 
         if (isFound.equalsIgnoreCase("Yes")) {
@@ -84,9 +87,10 @@ public class TCPServer {
                                                                                            // to client
         }
 
-        String response = inputfromClient.readLine();
+        String response = inputfromClient.readLine(); // response may have 3 value (Not want to create account, Want to
+                                                      // create account, choice)
 
-        // Block if client hasn't account
+        // if client hasn't account
         {
             if (response.equalsIgnoreCase("Not want to create account")) {
                 Server.close();
@@ -94,12 +98,12 @@ public class TCPServer {
             }
 
             if (response.equalsIgnoreCase("Want to create account")) {
-                String col_2 = inputfromClient.readLine();
-                int col_3 = Integer.parseInt(inputfromClient.readLine());
-                String col_4 = inputfromClient.readLine();
+                String col_2 = inputfromClient.readLine(); // receive name
+                int col_3 = Integer.parseInt(inputfromClient.readLine()); // receive age
+                String col_4 = inputfromClient.readLine(); // receive gender
                 Patient p = new Patient(PhoneNumber, col_2, col_3, col_4);
-                patientManager.insertPatient(p);
-                response = inputfromClient.readLine();
+                patientManager.insertPatient(p); // add p to allPatients array list
+                response = inputfromClient.readLine(); // receive choice from client and assign it to response
             }
         }
 
@@ -107,45 +111,47 @@ public class TCPServer {
         String first_entry = "yes";
         do {
             if (!first_entry.equalsIgnoreCase("yes"))
-                choice = inputfromClient.readLine();
+                choice = inputfromClient.readLine(); // if patient want another service
             else
-                choice = response;
+                choice = response; // value of response here is choice (1,2,3,4,5)
 
             switch (choice) {
-            case "1":
-                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber));
+            case "1": // Display Appointment
+                outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber)); // send to patient
+                                                                                          // appointments of PhoneNumber
                 first_entry = "no";
                 break;
 
-            case "2":
-                outToClient.println(appointmentsManager.displayDoctors());
+            case "2": // Reserve Appointment
+                outToClient.println(appointmentsManager.displayDoctors()); // send to patient doctors
                 outToClient.println("Enter year ->");
-                String year = inputfromClient.readLine(); // Receive year form client
+                String year = inputfromClient.readLine(); // Receive year form patient
                 outToClient.println("Enter month ->");
-                String month = inputfromClient.readLine();
+                String month = inputfromClient.readLine(); // Receive month form patient
                 outToClient.println("Enter day ->");
-                String day = inputfromClient.readLine();
+                String day = inputfromClient.readLine(); // Receive day form patient
                 outToClient.println(appointmentsManager.reservedDoctors(year, month, day));
                 outToClient.println("From ->");
-                String hour = inputfromClient.readLine();
+                String hour = inputfromClient.readLine(); // Receive from form patient
                 outToClient.println("To ->");
-                String to = inputfromClient.readLine();
+                String to = inputfromClient.readLine(); // Receive to form patient
                 outToClient.println("How many hours do you want (Maximum 3 hours) ->");
-                int no_hours = Integer.parseInt(inputfromClient.readLine());
-                System.out.print(no_hours);
+                int no_hours = Integer.parseInt(inputfromClient.readLine()); // Receive number of hours form client
                 outToClient.println(
                         "Enter the name of your doctor (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel)");
-                String doc_name = inputfromClient.readLine();
-                Appointment appointment = new Appointment(appointmentsManager.getAllAppointments().size() + 1,
-                        PhoneNumber, doc_name, year, month, day, hour, to, no_hours);
-                outToClient.println((appointmentsManager.reserve(appointment)));
+                String doc_name = inputfromClient.readLine(); // Receive which doctor patient want
+                int newAppointmentNumber = random.nextInt(1000);
+                Appointment appointment = new Appointment(newAppointmentNumber, PhoneNumber, doc_name, year, month, day,
+                        hour, to, no_hours);
+                outToClient.println((appointmentsManager.reserve(appointment))); // add
                 System.out.println(appointmentsManager.getAllAppointments().size());
-                outToClient.println("Appointment number: " + appointmentsManager.getAllAppointments().size() + "@"
-                        + "with doctor: " + doc_name + "@" + "At: " + hour + ":00 to " + to + ":00@"
-                        + "your price will be: " + appointmentsManager.receipt(doc_name, no_hours));
+                outToClient.println("Appointment number: " + newAppointmentNumber + "@" + "with doctor: " + doc_name
+                        + "@" + "At: " + hour + ":00 to " + to + ":00@" + "your price will be: "
+                        + appointmentsManager.receipt(doc_name, no_hours));
                 first_entry = "no";
                 break;
-            case "3":
+
+            case "3": // Modify Appointment
                 outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber)); // return info of appointment
                 if (!(appointmentsManager.dispalyAppointment(PhoneNumber)
                         .equalsIgnoreCase("You don't have any appointment"))) {
@@ -171,7 +177,8 @@ public class TCPServer {
                 }
                 first_entry = "no";
                 break;
-            case "4":
+
+            case "4": // Modify Appointment
                 outToClient.println(appointmentsManager.dispalyAppointment(PhoneNumber)); // return info of appointment
                 if (!(appointmentsManager.dispalyAppointment(PhoneNumber)
                         .equalsIgnoreCase("You don't have any appointment"))) {
@@ -183,7 +190,8 @@ public class TCPServer {
                 }
                 first_entry = "no";
                 break;
-            case "5":
+
+            case "5": // Exit
                 outToClient.println("Thanks, Goodbye :)");
                 PrintWriter write_to_csv_patient = new PrintWriter(file1);
                 PrintWriter write_to_csv_appointment = new PrintWriter(file2);
