@@ -153,7 +153,7 @@ public class TCPClient {
 	{
 		if (hours.length() != 1) // must one digit
 			return false;
-		if (hours.charAt(0) < 49 || hours.charAt(0) > 52) // must 1 or 2 or 3
+		if (hours.charAt(0) < 49 || hours.charAt(0) > 51) // must 1 or 2 or 3
 			return false;
 
 		return true;
@@ -164,14 +164,6 @@ public class TCPClient {
 				|| name.equalsIgnoreCase("Dr.KhalidAldayel"))
 			return true;
 		return false;
-
-	}
-
-	static boolean checkAppointmentNumber(String appointmnetNumber) {
-		if (appointmnetNumber.length() < 1 && appointmnetNumber.length() > 3)
-			return true;
-		else
-			return false;
 
 	}
 
