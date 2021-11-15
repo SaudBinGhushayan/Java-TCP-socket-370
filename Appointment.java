@@ -14,10 +14,12 @@ public class Appointment {
 	private int no_hours;
 	private ArrayList<Appointment> allAppointments = new ArrayList<Appointment>();
 
+	// Default Constructor
 	public Appointment() {
 
 	}
 
+	// Copy Constructor
 	public Appointment(int appointment_no, int phoneNumber, String doctor_Name, String year, String month, String day,
 			String hour, String to, int no_hours) {
 		Appointment_no = appointment_no;
@@ -29,7 +31,6 @@ public class Appointment {
 		this.hour = hour;
 		this.to = to;
 		this.no_hours = no_hours;
-
 	}
 
 	// insert new patient to array list
@@ -49,7 +50,7 @@ public class Appointment {
 	public String dispalyAppointment(int patient_Phone_number) {
 		String appointmentDetails = "";
 		char zero = '0';
-		for (int i = 0; i < allAppointments.size(); i++)
+		for (int i = 0; i < allAppointments.size(); i++) {
 			if (patient_Phone_number == allAppointments.get(i).getPhoneNumber()) {
 				if (allAppointments.get(i).getTo().length() == 1)
 					allAppointments.get(i).setTo(zero + allAppointments.get(i).getTo());
@@ -66,25 +67,34 @@ public class Appointment {
 							+ countAppointment(patient_Phone_number)
 							+ " Appointments@====================================";
 
-				appointmentDetails += "@Appointment Number:" + allAppointments.get(i).getAppointment_no() + "@Date: "
+				appointmentDetails += "@Appointment Number: " + allAppointments.get(i).getAppointment_no() + "@Date: "
 						+ allAppointments.get(i).getYear() + "/" + allAppointments.get(i).getMonth() + "/"
-						+ allAppointments.get(i).getDay() + " At " + allAppointments.get(i).getHour() + " to "
-						+ allAppointments.get(i).getTo() + "@With " + allAppointments.get(i).getDoctor_Name()
+						+ allAppointments.get(i).getDay() + " At " + allAppointments.get(i).getHour() + ":00 " + " to "
+						+ allAppointments.get(i).getTo() + ":00@With " + allAppointments.get(i).getDoctor_Name()
 						+ "@The price: " + allAppointments.get(i).receipt(allAppointments.get(i).getDoctor_Name(),
 								allAppointments.get(i).getNo_hours());
-				for (int j = 1; j < countAppointment(patient_Phone_number); j++) {
-					if (allAppointments.get(j).getTo().length() == 1)
-						allAppointments.get(j).setTo(zero + allAppointments.get(j).getTo());
-					appointmentDetails += "@------------------------------------@Appointment Number: "
-							+ allAppointments.get(j).getAppointment_no() + "@Date: " + allAppointments.get(j).getYear()
-							+ "/" + allAppointments.get(j).getMonth() + "/" + allAppointments.get(j).getDay() + " At "
-							+ allAppointments.get(j).getHour() + " to " + allAppointments.get(j).getTo() + "@With "
-							+ allAppointments.get(j).getDoctor_Name() + "@The price: " + allAppointments.get(i).receipt(
-									allAppointments.get(j).getDoctor_Name(), allAppointments.get(j).getNo_hours());
+
+				if (countAppointment(patient_Phone_number) == 1)
+					return appointmentDetails + "@=====================================@End printing information";
+
+				for (int j = 1; j < allAppointments.size(); j++) {
+					if (patient_Phone_number == allAppointments.get(j).getPhoneNumber()) {
+						if (allAppointments.get(j).getTo().length() == 1)
+							allAppointments.get(j).setTo(zero + allAppointments.get(j).getTo());
+						appointmentDetails += "@------------------------------------@Appointment Number: "
+								+ allAppointments.get(j).getAppointment_no() + "@Date: "
+								+ allAppointments.get(j).getYear() + "/" + allAppointments.get(j).getMonth() + "/"
+								+ allAppointments.get(j).getDay() + " At " + allAppointments.get(j).getHour() + ":00 "
+								+ " to " + allAppointments.get(j).getTo() + ":00@With "
+								+ allAppointments.get(j).getDoctor_Name() + "@The price: "
+								+ allAppointments.get(j).receipt(allAppointments.get(j).getDoctor_Name(),
+										allAppointments.get(j).getNo_hours());
+					}
 				}
-				return appointmentDetails;
+				return appointmentDetails + "@=====================================@End printing information";
 			}
 
+		}
 		return "You don't have any appointment";
 	}
 
@@ -113,7 +123,7 @@ public class Appointment {
 
 	public String reserve(Appointment appointment) {
 		allAppointments.add(appointment);
-		return "appointment reserved";
+		return "Appointment Reserved";
 
 	}
 
