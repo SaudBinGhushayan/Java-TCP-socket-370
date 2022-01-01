@@ -138,7 +138,7 @@ public class TCPServer {
                 outToClient.println("How many hours do you want (Maximum 3 hours) ->");
                 int no_hours = Integer.parseInt(inputfromClient.readLine()); // Receive number of hours form client
                 outToClient.println(
-                        "Enter the name of your doctor (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel)");
+                        "Enter the name of your doctor (e.g Dr.Saud , Dr.Abdulmajeed , Dr.Khalid)");
                 String doc_name = inputfromClient.readLine(); // Receive which doctor patient want
                 int newAppointmentNumber = random.nextInt(1000);
                 Appointment appointment = new Appointment(newAppointmentNumber, PhoneNumber, doc_name, year, month, day,
@@ -158,7 +158,7 @@ public class TCPServer {
                     outToClient.println("Which appointment wants to modify?@Choose appointment number :");
                     int numberOfAppointmentWantsToModify = Integer.parseInt(inputfromClient.readLine());
                     outToClient.println(
-                            "Enter Doctor name (e.g Dr.SaudBinGhushayan , Dr.AbdulmajeedDuraibi , Dr.KhalidAldayel) ");
+                            "Enter Doctor name (e.g Dr.Saud, Dr.Abdulmajeed , Dr.Khalid) ");
                     String doctor_name = inputfromClient.readLine();
                     outToClient.println("Enter year ->");
                     String year_ = inputfromClient.readLine();

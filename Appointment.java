@@ -103,9 +103,9 @@ public class Appointment {
 	// Display doctors and their working hours and price
 	public String displayDoctors() {
 		String display = "Doctor Name :             Working hours              price per hour@"
-				+ "Dr.Saud BinGhushayan             13:00 to 23:00             300 SR@"
-				+ "Dr.Abdulmajeed Duraibi           16:00 to 23:00             250 SR@"
-				+ "Dr.Khalid Aldayel             	18:00 to 22:00             200 SR@";
+				+ "Dr.Saud                          13:00 to 23:00             300 SR@"
+				+ "Dr.Abdulmajeed                   16:00 to 23:00             250 SR@"
+				+ "Dr.Khalid                     	18:00 to 22:00             200 SR@";
 		return display;
 	}
 
@@ -136,13 +136,13 @@ public class Appointment {
 	public int receipt(String doc_name, int no_hours) {
 		int receipt = 0;
 		switch (doc_name) {
-		case "Dr.SaudBinGhushayan":
+		case "Dr.Saud":
 			receipt = 300 * no_hours;
 			break;
-		case "Dr.AbdulmajeedDuraibi":
+		case "Dr.Abdulmajeed":
 			receipt = 250 * no_hours;
 			break;
-		case "Dr.KhalidAldayel":
+		case "Dr.Khalid":
 			receipt = 200 * no_hours;
 			break;
 		}

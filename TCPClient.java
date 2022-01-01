@@ -156,12 +156,12 @@ public class TCPClient {
 	}
 
 	static boolean checkDrName(String name) {
-		if (name.equalsIgnoreCase("Dr.SaudBinGhushayan") || name.equalsIgnoreCase("Dr.AbdulmajeedDuraibi") // doctor
+		if (name.equalsIgnoreCase("Dr.Saud") || name.equalsIgnoreCase("Dr.Abdulmajeed") // doctor
 																											// name must
 																											// between
 																											// these
 																											// names
-				|| name.equalsIgnoreCase("Dr.KhalidAldayel"))
+				|| name.equalsIgnoreCase("Dr.Khalid"))
 			return true;
 		return false;
 	}
